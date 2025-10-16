@@ -5,3 +5,6 @@ databaseChangeLog:
   - include:
       file: indexes.yaml
       relativeToChangelogFile: true
+  - include:
+      file: data.yaml
+      relativeToChangelogFile: true
