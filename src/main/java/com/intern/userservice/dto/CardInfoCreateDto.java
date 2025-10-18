@@ -9,9 +9,10 @@ public record CardInfoCreateDto(
         String number,
 
         @NotBlank(message = "Card holder is required")
-        @Size(max = 150, message = "Card holder name size exceeded")
+        @Size(min = 5, max = 150, message = "Card holder name size exceeded")
         String holder,
 
+        @NotNull(message = "Expiration date is required")
         @Future(message = "Expiration date must be in the future")
         LocalDate expirationDate,
 
