@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 public record CardInfoResponse(
         Long id,
-        String cardNumber,
-        String cardType,
+        String number,
+        String holder,
         LocalDate expirationDate
 ) {
 }
