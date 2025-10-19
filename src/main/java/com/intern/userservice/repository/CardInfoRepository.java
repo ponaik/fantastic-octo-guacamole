@@ -28,13 +28,6 @@ public interface CardInfoRepository extends JpaRepository<CardInfo, Long> {
     @Query(value = "DELETE FROM card_info WHERE id = :id", nativeQuery = true)
     int deleteByIdNative(@Param("id") Long id);
 
-    @Query("SELECT c FROM CardInfo c WHERE c.id = :id")
-    Optional<CardInfo> findByIdJPQL(@Param("id") Long id);
-
-    @Modifying
-    @Query("DELETE FROM CardInfo c WHERE c.id = :id")
-    int deleteByIdJPQL(@Param("id") Long id);
-
     // Native methods
     // Page<CardInfo> findAll(Pageable pageable);
     // findById is a named method
