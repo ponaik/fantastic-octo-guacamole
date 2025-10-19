@@ -25,7 +25,7 @@ public class CardInfoService {
 
 
     public Optional<CardInfoResponse> getCardById(Long id) {
-        return cardInfoRepository.findCardByIdJPQL(id)
+        return cardInfoRepository.findByIdNative(id)
                 .map(cardInfoMapper::toCardInfoResponse);
     }
 
@@ -39,13 +39,17 @@ public class CardInfoService {
         if (!cardInfoRepository.existsById(id)) {
             throw new IllegalArgumentException("Card with id " + id + " not found");
         }
-        cardInfoRepository.deleteById(id);
+        cardInfoRepository.deleteByIdNative(id);
     }
 
+    @Transactional
     public CardInfoResponse createCard(CardInfoCreateDto dto) {
-        User user = userRepository.findById(dto.userId())
+        User user = userRepository.findByIdJPQL(dto.userId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        // Не много вижу смысла выдумывать как вернуть созданного пользователя
+        // т.к. нативный метод присваивает случайный ID но не возвращает его
+        // (и этот метод выглядит гораздо лучше)
         CardInfo card = cardInfoMapper.fromCardInfoCreateDto(dto);
         card.setUser(user);
 
