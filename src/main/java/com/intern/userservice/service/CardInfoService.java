@@ -2,59 +2,18 @@ package com.intern.userservice.service;
 
 import com.intern.userservice.dto.CardInfoCreateDto;
 import com.intern.userservice.dto.CardInfoResponse;
-import com.intern.userservice.mapper.CardInfoMapper;
-import com.intern.userservice.model.CardInfo;
-import com.intern.userservice.model.User;
-import com.intern.userservice.repository.CardInfoRepository;
-import com.intern.userservice.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Service
-@RequiredArgsConstructor
-public class CardInfoService {
+public interface CardInfoService {
+    Optional<CardInfoResponse> getCardById(Long id);
 
-    private final CardInfoRepository cardInfoRepository;
-    private final UserRepository userRepository;
-    private final CardInfoMapper cardInfoMapper;
+    Page<CardInfoResponse> getAllCards(Pageable pageable);
 
+    void deleteCardById(Long id);
 
-    public Optional<CardInfoResponse> getCardById(Long id) {
-        return cardInfoRepository.findByIdNative(id)
-                .map(cardInfoMapper::toCardInfoResponse);
-    }
-
-    public Page<CardInfoResponse> getAllCards(Pageable pageable) {
-        return cardInfoRepository.findAll(pageable)
-                .map(cardInfoMapper::toCardInfoResponse);
-    }
-
-    @Transactional
-    public void deleteCardById(Long id) {
-        if (!cardInfoRepository.existsById(id)) {
-            throw new IllegalArgumentException("Card with id " + id + " not found");
-        }
-        cardInfoRepository.deleteByIdNative(id);
-    }
-
-    @Transactional
-    public CardInfoResponse createCard(CardInfoCreateDto dto) {
-        User user = userRepository.findByIdJPQL(dto.userId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        // Не много вижу смысла выдумывать как вернуть созданного пользователя
-        // т.к. нативный метод присваивает случайный ID но не возвращает его
-        // (и этот метод выглядит гораздо лучше)
-        CardInfo card = cardInfoMapper.fromCardInfoCreateDto(dto);
-        card.setUser(user);
-
-        CardInfo saved = cardInfoRepository.save(card);
-        return cardInfoMapper.toCardInfoResponse(saved);
-    }
+    CardInfoResponse createCard(CardInfoCreateDto dto);
 }
-

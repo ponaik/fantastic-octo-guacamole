@@ -36,6 +36,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.id = :id")
     Optional<User> findByIdJPQL(@Param("id") Long id);
 
+    Optional<User> findByEmail(String email);
+
 //    Named methods
 //    Pagination is built-in from PagingAndSortingRepository<T, ID>
 //    Page<User> findAll(Pageable pageable);
