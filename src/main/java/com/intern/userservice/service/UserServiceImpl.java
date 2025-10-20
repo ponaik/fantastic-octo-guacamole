@@ -51,10 +51,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByIdJPQL(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
         userMapper.updateEntityFromDto(request, user);
-        System.out.println(request);
-        System.out.println(user);
         User saved = userRepository.save(user);
-        System.out.println(saved);
         return userMapper.toUserResponse(saved);
     }
 
