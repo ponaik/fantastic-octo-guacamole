@@ -3,6 +3,7 @@ package com.intern.userservice.service;
 import com.intern.userservice.dto.UserCreateDto;
 import com.intern.userservice.dto.UserResponse;
 import com.intern.userservice.dto.UserUpdateDto;
+import com.intern.userservice.exception.EmailAlreadyExistsException;
 import com.intern.userservice.mapper.UserMapper;
 import com.intern.userservice.model.User;
 import com.intern.userservice.repository.UserRepository;
@@ -50,6 +51,11 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUser(Long id, UserUpdateDto request) {
         User user = userRepository.findByIdJPQL(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
+
+        if (userRepository.existsByEmail(request.email())) {
+            throw new EmailAlreadyExistsException(request.email());
+        }
+
         userMapper.updateEntityFromDto(request, user);
         User saved = userRepository.save(user);
         return userMapper.toUserResponse(saved);

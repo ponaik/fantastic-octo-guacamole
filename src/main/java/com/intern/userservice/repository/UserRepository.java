@@ -38,6 +38,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
+    boolean existsByEmail(String email);
+
 //    Named methods
 //    Pagination is built-in from PagingAndSortingRepository<T, ID>
 //    Page<User> findAll(Pageable pageable);

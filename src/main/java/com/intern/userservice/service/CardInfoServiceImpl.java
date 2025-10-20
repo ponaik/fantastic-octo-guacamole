@@ -7,6 +7,7 @@ import com.intern.userservice.model.CardInfo;
 import com.intern.userservice.model.User;
 import com.intern.userservice.repository.CardInfoRepository;
 import com.intern.userservice.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +41,7 @@ public class CardInfoServiceImpl implements CardInfoService {
     @Override
     public void deleteCardById(Long id) {
         if (!cardInfoRepository.existsById(id)) {
-            throw new IllegalArgumentException("Card with id " + id + " not found");
+            throw new EntityNotFoundException("Card not found with id " + id);
         }
         cardInfoRepository.deleteByIdNative(id);
     }
@@ -49,7 +50,7 @@ public class CardInfoServiceImpl implements CardInfoService {
     @Override
     public CardInfoResponse createCard(CardInfoCreateDto dto) {
         User user = userRepository.findByIdJPQL(dto.userId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id " + dto.userId()));
 
         // Не много вижу смысла выдумывать как вернуть созданного пользователя
         // т.к. нативный метод присваивает случайный ID но не возвращает его

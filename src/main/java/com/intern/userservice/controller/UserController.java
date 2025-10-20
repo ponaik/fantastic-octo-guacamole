@@ -4,7 +4,7 @@ import com.intern.userservice.dto.UserCreateDto;
 import com.intern.userservice.dto.UserResponse;
 import com.intern.userservice.dto.UserUpdateDto;
 import com.intern.userservice.service.UserService;
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
+@Validated
 public class UserController {
 
     private final UserService userService;
@@ -45,7 +46,7 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<UserResponse> getUserByEmail(@RequestParam String email) {
+    public ResponseEntity<UserResponse> getUserByEmail(@Email @RequestParam String email) {
         UserResponse user = userService.getUserByEmail(email);
         return ResponseEntity.ok(user);
     }
