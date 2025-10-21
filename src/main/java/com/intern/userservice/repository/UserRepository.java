@@ -13,21 +13,28 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Modifying
-    @Query(value = "INSERT INTO users (name, surname, birth_date, email) VALUES (:name, :surname, :birthDate, :email)",
+    @Query(value = "INSERT INTO users (name, surname, birth_date, email) " +
+            "VALUES (:name, :surname, :birthDate, :email) " +
+            "RETURNING *",
             nativeQuery = true)
-    void createUserNative(@Param("name") String name,
+    User createUserNative(@Param("name") String name,
                           @Param("surname") String surname,
                           @Param("birthDate") LocalDate birthDate,
                           @Param("email") String email);
 
-    @Modifying
-    @Query("UPDATE User u SET u.name = :name, u.surname = :surname, u.birthDate = :birthDate, u.email = :email WHERE u.id = :id")
-    int updateByIdJPQL(@Param("id") Long id,
-                       @Param("name") String name,
-                       @Param("surname") String surname,
-                       @Param("birthDate") LocalDate birthDate,
-                       @Param("email") String email);
+    @Query(value = "UPDATE users " +
+            "SET name = :name, " +
+            "    surname = :surname, " +
+            "    birth_date = :birthDate, " +
+            "    email = :email " +
+            "WHERE id = :id " +
+            "RETURNING *",
+            nativeQuery = true)
+    User updateByIdNative(@Param("id") Long id,
+                          @Param("name") String name,
+                          @Param("surname") String surname,
+                          @Param("birthDate") LocalDate birthDate,
+                          @Param("email") String email);
 
     @Modifying
     @Query("DELETE FROM User u WHERE u.id = :id")
@@ -43,7 +50,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //    Named methods
 //    Pagination is built-in from PagingAndSortingRepository<T, ID>
 //    Page<User> findAll(Pageable pageable);
-//    Optional<User> findById(Long id);
-//    Optional<User> findByEmail(String email);
-//    void deleteById(Long id);
 }

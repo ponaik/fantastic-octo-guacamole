@@ -24,13 +24,21 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserResponse createUser(UserCreateDto request) {
-        User user = userMapper.fromUserCreateDto(request);
-        return userMapper.toUserResponse(userRepository.save(user));
+//        User user = userMapper.fromUserCreateDto(request);
+
+        User created = userRepository.createUserNative(
+                request.name(),
+                request.surname(),
+                request.birthDate(),
+                request.email()
+        );
+
+        return userMapper.toUserResponse(created);
     }
 
     @Override
     public UserResponse getUserById(Long id) {
-        return userRepository.findById(id)
+        return userRepository.findByIdJPQL(id)
                 .map(userMapper::toUserResponse)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
     }
@@ -57,8 +65,14 @@ public class UserServiceImpl implements UserService {
         }
 
         userMapper.updateEntityFromDto(request, user);
-        User saved = userRepository.save(user);
-        return userMapper.toUserResponse(saved);
+
+        User updated = userRepository.updateByIdNative(
+                id,
+                user.getName(),
+                user.getSurname(),
+                user.getBirthDate(),
+                user.getEmail());
+        return userMapper.toUserResponse(updated);
     }
 
     @Transactional

@@ -52,13 +52,12 @@ public class CardInfoServiceImpl implements CardInfoService {
         User user = userRepository.findByIdJPQL(dto.userId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id " + dto.userId()));
 
-        // Не много вижу смысла выдумывать как вернуть созданного пользователя
-        // т.к. нативный метод присваивает случайный ID но не возвращает его
-        // (и этот метод выглядит гораздо лучше)
-        CardInfo card = cardInfoMapper.fromCardInfoCreateDto(dto);
-        card.setUser(user);
-
-        CardInfo saved = cardInfoRepository.save(card);
+        CardInfo saved = cardInfoRepository.createCardNative(
+                dto.number(),
+                dto.holder(),
+                dto.expirationDate(),
+                dto.userId()
+        );
         return cardInfoMapper.toCardInfoResponse(saved);
     }
 }

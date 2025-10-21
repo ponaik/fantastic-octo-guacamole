@@ -13,10 +13,10 @@ import java.util.Optional;
 @Repository
 public interface CardInfoRepository extends JpaRepository<CardInfo, Long> {
 
-    @Modifying
     @Query(value = "INSERT INTO card_info (number, holder, expiration_date, user_id) " +
-            "VALUES (:number, :holder, :expirationDate, :userId)", nativeQuery = true)
-    void createCardNative(@Param("number") String number,
+            "VALUES (:number, :holder, :expirationDate, :userId)" +
+            "RETURNING *", nativeQuery = true)
+    CardInfo createCardNative(@Param("number") String number,
                           @Param("holder") String holder,
                           @Param("expirationDate") LocalDate expirationDate,
                           @Param("userId") Long userId);
@@ -28,7 +28,7 @@ public interface CardInfoRepository extends JpaRepository<CardInfo, Long> {
     @Query(value = "DELETE FROM card_info WHERE id = :id", nativeQuery = true)
     int deleteByIdNative(@Param("id") Long id);
 
-    // Native methods
+    // Named methods
     // Page<CardInfo> findAll(Pageable pageable);
     // findById is a named method
     // deleteById is a named method
