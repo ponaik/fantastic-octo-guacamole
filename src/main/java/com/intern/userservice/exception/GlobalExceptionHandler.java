@@ -33,9 +33,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
+    @ExceptionHandler({EmailAlreadyExistsException.class, UserCardPairAlreadyExistsException.class})
     public ResponseEntity<ErrorResponse> handleEmailExists(
-            EmailAlreadyExistsException ex,
+            RuntimeException ex,
             HttpServletRequest request) {
 
         ErrorResponse errorResponse = new ErrorResponse(

@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20251021_add_unique_constraint_cardinfo
+      author: ioann_yaromenka
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: user_id, number
+            constraintName: uc_f118ca719f7988928e63bac89
+            tableName: card_info
+  - changeSet:
+      id: 20251021_modify_cardinfo_number_length
+      author: ioann_yaromenka
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - modifyDataType:
+            columnName: number
+            newDataType: VARCHAR(19)
+            tableName: card_info
+

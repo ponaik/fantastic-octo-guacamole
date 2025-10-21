@@ -14,3 +14,6 @@ databaseChangeLog:
   - include:
       file: v1.1/20251020_modify_fk_cardinfo_user.yaml
       relativeToChangelogFile: true
+  - include:
+      file: v1.1/20251021_cardinfo_schema_update.yaml
+      relativeToChangelogFile: true

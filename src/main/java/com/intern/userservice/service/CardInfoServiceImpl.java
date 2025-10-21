@@ -2,6 +2,7 @@ package com.intern.userservice.service;
 
 import com.intern.userservice.dto.CardInfoCreateDto;
 import com.intern.userservice.dto.CardInfoResponse;
+import com.intern.userservice.exception.UserCardPairAlreadyExistsException;
 import com.intern.userservice.mapper.CardInfoMapper;
 import com.intern.userservice.model.CardInfo;
 import com.intern.userservice.model.User;
@@ -49,8 +50,13 @@ public class CardInfoServiceImpl implements CardInfoService {
     @Transactional
     @Override
     public CardInfoResponse createCard(CardInfoCreateDto dto) {
-        User user = userRepository.findByIdJPQL(dto.userId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id " + dto.userId()));
+        if (!userRepository.existsById(dto.userId())) {
+            throw new EntityNotFoundException("User not found with id " + dto.userId());
+        }
+
+        if (cardInfoRepository.existsCardInfoByUserIdAndNumber(dto.userId(), dto.number())) {
+            throw new UserCardPairAlreadyExistsException(dto.userId(), dto.number());
+        }
 
         CardInfo saved = cardInfoRepository.createCardNative(
                 dto.number(),

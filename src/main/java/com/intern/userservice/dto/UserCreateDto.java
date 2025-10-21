@@ -5,11 +5,11 @@ import java.time.LocalDate;
 
 public record UserCreateDto(
         @NotBlank(message = "Name is required")
-        @Size(min = 2, max = 100, message = "Name size exceeded")
+        @Size(min = 2, max = 100, message = "Invalid name length")
         String name,
 
         @NotBlank(message = "Surname is required")
-        @Size(min = 2, max = 100, message = "Surname size exceeded")
+        @Size(min = 2, max = 100, message = "Invalid surname length")
         String surname,
 
         @NotNull(message = "Birth date is required")
@@ -17,7 +17,7 @@ public record UserCreateDto(
         LocalDate birthDate,
 
         @Email(message = "Email must be valid")
-        @Size(max = 255, message = "Email size exceeded")
+        @Size(max = 255, message = "Email length exceeded")
         @NotBlank(message = "Email is required")
         String email
 ) {}

@@ -6,6 +6,7 @@ public record CardInfoResponse(
         Long id,
         String number,
         String holder,
-        LocalDate expirationDate
+        LocalDate expirationDate,
+        Long userId
 ) {
 }

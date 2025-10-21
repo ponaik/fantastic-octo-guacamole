@@ -5,11 +5,11 @@ import java.time.LocalDate;
 
 public record CardInfoCreateDto(
         @NotBlank(message = "Card number is required")
-        @Size(min = 20, max = 20, message = "Invalid card number size")
+        @Size(min = 8, max = 19, message = "Card number length must be in [8, 19]")
         String number,
 
         @NotBlank(message = "Card holder is required")
-        @Size(min = 5, max = 150, message = "Card holder name size exceeded")
+        @Size(min = 5, max = 150, message = "Card holder name length must be in [5, 150]")
         String holder,
 
         @NotNull(message = "Expiration date is required")

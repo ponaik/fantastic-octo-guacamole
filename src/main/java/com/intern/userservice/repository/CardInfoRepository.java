@@ -1,6 +1,9 @@
 package com.intern.userservice.repository;
 
 import com.intern.userservice.model.CardInfo;
+import com.intern.userservice.model.User;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,6 +30,8 @@ public interface CardInfoRepository extends JpaRepository<CardInfo, Long> {
     @Modifying
     @Query(value = "DELETE FROM card_info WHERE id = :id", nativeQuery = true)
     int deleteByIdNative(@Param("id") Long id);
+
+    boolean existsCardInfoByUserIdAndNumber(Long userId, String number);
 
     // Named methods
     // Page<CardInfo> findAll(Pageable pageable);
