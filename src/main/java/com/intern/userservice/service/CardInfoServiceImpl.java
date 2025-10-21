@@ -5,7 +5,6 @@ import com.intern.userservice.dto.CardInfoResponse;
 import com.intern.userservice.exception.UserCardPairAlreadyExistsException;
 import com.intern.userservice.mapper.CardInfoMapper;
 import com.intern.userservice.model.CardInfo;
-import com.intern.userservice.model.User;
 import com.intern.userservice.repository.CardInfoRepository;
 import com.intern.userservice.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
