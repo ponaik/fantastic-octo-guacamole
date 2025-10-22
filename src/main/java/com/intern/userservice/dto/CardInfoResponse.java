@@ -1,5 +1,6 @@
 package com.intern.userservice.dto;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 public record CardInfoResponse(
@@ -8,5 +9,5 @@ public record CardInfoResponse(
         String holder,
         LocalDate expirationDate,
         Long userId
-) {
+) implements Serializable {
 }

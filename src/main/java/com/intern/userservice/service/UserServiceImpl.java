@@ -9,6 +9,10 @@ import com.intern.userservice.model.User;
 import com.intern.userservice.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    @Caching(
+            put = {
+                    @CachePut(value = "user", key = "#result.id"),
+                    @CachePut(value = "userByEmail", key = "#result.email")
+            },
+            evict = {
+                    @CacheEvict(value = "users", allEntries = true)
+            }
+    )
     public UserResponse createUser(UserCreateDto request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyExistsException(request.email());
@@ -39,6 +52,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "user", key = "#id")
     public UserResponse getUserById(Long id) {
         return userRepository.findByIdJPQL(id)
                 .map(userMapper::toUserResponse)
@@ -46,11 +60,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "users", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     public Page<UserResponse> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable).map(userMapper::toUserResponse);
     }
 
     @Override
+    @Cacheable(value = "userByEmail", key = "#email")
     public UserResponse getUserByEmail(String email) {
         return userRepository.findByEmail(email).map(userMapper::toUserResponse)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with email " + email));
@@ -58,6 +74,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    @Caching(
+            put = {
+                    @CachePut(value = "user", key = "#id"),
+                    @CachePut(value = "userByEmail", key = "#result.email")
+            },
+            evict = {
+                    @CacheEvict(value = "users", allEntries = true)
+            }
+    )
     public UserResponse updateUser(Long id, UserUpdateDto request) {
         User user = userRepository.findByIdJPQL(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
@@ -79,6 +104,13 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "user", key = "#id"),
+                    @CacheEvict(value = "userByEmail", allEntries = true),
+                    @CacheEvict(value = "users", allEntries = true)
+            }
+    )
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("User not found with id " + id);
@@ -86,4 +118,3 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteByIdJPQL(id);
     }
 }
-
