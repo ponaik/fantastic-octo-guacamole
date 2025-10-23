@@ -9,11 +9,16 @@ import com.intern.userservice.repository.CardInfoRepository;
 import com.intern.userservice.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,14 +29,23 @@ public class CardInfoServiceImpl implements CardInfoService {
     private final UserRepository userRepository;
     private final CardInfoMapper cardInfoMapper;
 
-
     @Override
+    @Cacheable(value = "card", key = "#id")
     public Optional<CardInfoResponse> getCardById(Long id) {
         return cardInfoRepository.findByIdNative(id)
                 .map(cardInfoMapper::toCardInfoResponse);
     }
 
     @Override
+    @Cacheable(value = "userCards", key = "#userId")
+    public List<CardInfoResponse> getCardsByUserId(Long userId) {
+        return cardInfoRepository.getCardInfosByUserId(userId).stream()
+                .map(cardInfoMapper::toCardInfoResponse)
+                .toList();
+    }
+
+    @Override
+    @Cacheable(value = "cards", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     public Page<CardInfoResponse> getAllCards(Pageable pageable) {
         return cardInfoRepository.findAll(pageable)
                 .map(cardInfoMapper::toCardInfoResponse);
@@ -39,6 +53,10 @@ public class CardInfoServiceImpl implements CardInfoService {
 
     @Transactional
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "card", key = "#id"),
+            @CacheEvict(value = "cards", allEntries = true)
+    })
     public void deleteCardById(Long id) {
         if (!cardInfoRepository.existsById(id)) {
             throw new EntityNotFoundException("Card not found with id " + id);
@@ -48,6 +66,14 @@ public class CardInfoServiceImpl implements CardInfoService {
 
     @Transactional
     @Override
+    @Caching(
+            put = {
+                    @CachePut(value = "card", key = "#result.id")
+            },
+            evict = {
+                    @CacheEvict(value = "cards", allEntries = true)
+            }
+    )
     public CardInfoResponse createCard(CardInfoCreateDto dto) {
         if (!userRepository.existsById(dto.userId())) {
             throw new EntityNotFoundException("User not found with id " + dto.userId());
@@ -66,4 +92,3 @@ public class CardInfoServiceImpl implements CardInfoService {
         return cardInfoMapper.toCardInfoResponse(saved);
     }
 }
-

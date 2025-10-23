@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,6 +28,8 @@ public interface CardInfoRepository extends JpaRepository<CardInfo, Long> {
     @Modifying
     @Query(value = "DELETE FROM card_info WHERE id = :id", nativeQuery = true)
     int deleteByIdNative(@Param("id") Long id);
+
+    List<CardInfo> getCardInfosByUserId(Long userId);
 
     boolean existsCardInfoByUserIdAndNumber(Long userId, String number);
 

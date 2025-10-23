@@ -34,7 +34,7 @@ public class User {
     @Column(nullable = false, unique = true, length = 255)
     private String email;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CardInfo> cards = new ArrayList<>();
 
 
