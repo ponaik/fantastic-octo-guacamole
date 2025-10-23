@@ -108,7 +108,8 @@ public class UserServiceImpl implements UserService {
             evict = {
                     @CacheEvict(value = "user", key = "#id"),
                     @CacheEvict(value = "userByEmail", allEntries = true),
-                    @CacheEvict(value = "users", allEntries = true)
+                    @CacheEvict(value = "users", allEntries = true),
+                    @CacheEvict(value = "userCards", key = "#id")
             }
     )
     public void deleteUser(Long id) {

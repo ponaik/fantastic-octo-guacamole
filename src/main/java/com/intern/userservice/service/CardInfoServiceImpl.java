@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,6 +34,14 @@ public class CardInfoServiceImpl implements CardInfoService {
     public Optional<CardInfoResponse> getCardById(Long id) {
         return cardInfoRepository.findByIdNative(id)
                 .map(cardInfoMapper::toCardInfoResponse);
+    }
+
+    @Override
+    @Cacheable(value = "userCards", key = "#userId")
+    public List<CardInfoResponse> getCardsByUserId(Long userId) {
+        return cardInfoRepository.getCardInfosByUserId(userId).stream()
+                .map(cardInfoMapper::toCardInfoResponse)
+                .toList();
     }
 
     @Override

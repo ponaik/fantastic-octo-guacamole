@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -34,6 +35,12 @@ public class CardInfoController {
         Optional<CardInfoResponse> card = cardInfoService.getCardById(id);
         return card.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CardInfoResponse>> getCardsByUserId(@RequestParam Long userId) {
+        List<CardInfoResponse> userCards = cardInfoService.getCardsByUserId(userId);
+        return ResponseEntity.ok(userCards);
     }
 
     @GetMapping
