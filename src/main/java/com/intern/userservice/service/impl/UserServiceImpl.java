@@ -1,4 +1,4 @@
-package com.intern.userservice.service;
+package com.intern.userservice.service.impl;
 
 import com.intern.userservice.dto.UserCreateDto;
 import com.intern.userservice.dto.UserResponse;
@@ -7,6 +7,7 @@ import com.intern.userservice.exception.EmailAlreadyExistsException;
 import com.intern.userservice.mapper.UserMapper;
 import com.intern.userservice.model.User;
 import com.intern.userservice.repository.UserRepository;
+import com.intern.userservice.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;

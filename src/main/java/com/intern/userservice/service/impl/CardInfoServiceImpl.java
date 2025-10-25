@@ -1,4 +1,4 @@
-package com.intern.userservice.service;
+package com.intern.userservice.service.impl;
 
 import com.intern.userservice.dto.CardInfoCreateDto;
 import com.intern.userservice.dto.CardInfoResponse;
@@ -7,6 +7,7 @@ import com.intern.userservice.mapper.CardInfoMapper;
 import com.intern.userservice.model.CardInfo;
 import com.intern.userservice.repository.CardInfoRepository;
 import com.intern.userservice.repository.UserRepository;
+import com.intern.userservice.service.CardInfoService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
