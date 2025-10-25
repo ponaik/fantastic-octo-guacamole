@@ -1,14 +1,3 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/userdb
-    username: ponaik
-    password: letmein
-    driver-class-name: org.postgresql.Driver
-
-  data:
-    redis:
-      host: localhost
-      port: 6379
-
   jpa:
     show-sql: true
