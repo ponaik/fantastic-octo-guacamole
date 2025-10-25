@@ -124,19 +124,20 @@ class UserServiceImplTest {
         given(userRepository.findByIdJPQL(1L)).willReturn(Optional.of(sampleUser));
         given(userMapper.toUserResponse(sampleUser)).willReturn(sampleResponse);
 
-        UserResponse result = userService.getUserById(1L);
+        Optional<UserResponse> result = userService.getUserById(1L);
 
-        assertThat(result).isEqualTo(sampleResponse);
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get()).isEqualTo(sampleResponse);
         verify(userRepository).findByIdJPQL(1L);
     }
 
     @Test
-    void getUserById_whenNotFound_throwsNotFoundException() {
+    void getUserById_whenNotExists_shouldReturnEmpty() {
         given(userRepository.findByIdJPQL(2L)).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> userService.getUserById(2L))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("User not found with id 2");
+        Optional<UserResponse> user = userService.getUserById(2L);
+
+        assertThat(user.isPresent()).isFalse();
 
         verify(userRepository).findByIdJPQL(2L);
     }
@@ -146,9 +147,10 @@ class UserServiceImplTest {
         given(userRepository.findByEmail("alice@example.com")).willReturn(Optional.of(sampleUser));
         given(userMapper.toUserResponse(sampleUser)).willReturn(sampleResponse);
 
-        UserResponse result = userService.getUserByEmail("alice@example.com");
+        Optional<UserResponse> result = userService.getUserByEmail("alice@example.com");
 
-        assertThat(result.email()).isEqualTo("alice@example.com");
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get().email()).isEqualTo("alice@example.com");
         verify(userRepository).findByEmail("alice@example.com");
     }
 
@@ -156,9 +158,9 @@ class UserServiceImplTest {
     void getUserByEmail_whenNotFound_throwsNotFoundException() {
         given(userRepository.findByEmail("missing@example.com")).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> userService.getUserByEmail("missing@example.com"))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("User not found with email missing@example.com");
+        Optional<UserResponse> user = userService.getUserByEmail("missing@example.com");
+
+        assertThat(user.isPresent()).isFalse();
 
         verify(userRepository).findByEmail("missing@example.com");
     }

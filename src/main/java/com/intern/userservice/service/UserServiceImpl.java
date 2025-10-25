@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -53,10 +55,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Cacheable(value = "user", key = "#id")
-    public UserResponse getUserById(Long id) {
+    public Optional<UserResponse> getUserById(Long id) {
         return userRepository.findByIdJPQL(id)
-                .map(userMapper::toUserResponse)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
+                .map(userMapper::toUserResponse);
     }
 
     @Override
@@ -67,9 +68,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Cacheable(value = "userByEmail", key = "#email")
-    public UserResponse getUserByEmail(String email) {
-        return userRepository.findByEmail(email).map(userMapper::toUserResponse)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with email " + email));
+    public Optional<UserResponse> getUserByEmail(String email) {
+        return userRepository.findByEmail(email).map(userMapper::toUserResponse);
     }
 
     @Transactional
