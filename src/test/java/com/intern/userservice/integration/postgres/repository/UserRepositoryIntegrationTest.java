@@ -1,9 +1,10 @@
 package com.intern.userservice.integration.postgres.repository;
 
-import com.intern.userservice.integration.AbstractPostgresIntegrationTest;
+import com.intern.userservice.integration.PostgresTestContainerExtension;
 import com.intern.userservice.model.User;
 import com.intern.userservice.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class UserRepositoryIntegrationTest extends AbstractPostgresIntegrationTest {
+@ExtendWith(PostgresTestContainerExtension.class)
+class UserRepositoryIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;

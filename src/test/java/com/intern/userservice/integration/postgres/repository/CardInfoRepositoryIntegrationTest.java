@@ -1,9 +1,10 @@
 package com.intern.userservice.integration.postgres.repository;
 
-import com.intern.userservice.integration.AbstractPostgresIntegrationTest;
+import com.intern.userservice.integration.PostgresTestContainerExtension;
 import com.intern.userservice.model.CardInfo;
 import com.intern.userservice.repository.CardInfoRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class CardInfoRepositoryIntegrationTest extends AbstractPostgresIntegrationTest {
+@ExtendWith(PostgresTestContainerExtension.class)
+class CardInfoRepositoryIntegrationTest {
 
     @Autowired
     private CardInfoRepository cardInfoRepository;
