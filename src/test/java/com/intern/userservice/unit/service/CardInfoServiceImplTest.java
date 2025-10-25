@@ -7,7 +7,7 @@ import com.intern.userservice.mapper.CardInfoMapper;
 import com.intern.userservice.model.CardInfo;
 import com.intern.userservice.repository.CardInfoRepository;
 import com.intern.userservice.repository.UserRepository;
-import com.intern.userservice.service.CardInfoServiceImpl;
+import com.intern.userservice.service.impl.CardInfoServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;

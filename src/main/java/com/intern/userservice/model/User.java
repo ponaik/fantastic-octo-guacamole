@@ -31,20 +31,9 @@ public class User {
     @Column(nullable = false, name = "birth_date")
     private LocalDate birthDate;
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CardInfo> cards = new ArrayList<>();
-
-
-    public void addCard(CardInfo card) {
-        cards.add(card);
-        card.setUser(this);
-    }
-
-    public void removeCard(CardInfo card) {
-        cards.remove(card);
-        card.setUser(null);
-    }
 }
