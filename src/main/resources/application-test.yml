@@ -6,12 +6,15 @@ spring:
     password: test
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     show-sql: true
   data:
     redis:
       host: localhost
       port: 6379
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    contexts: test
 
 logging:
   level:

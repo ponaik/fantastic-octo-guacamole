@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 20251015-insert-users
       author: ioann_yaromenka
+      context: test
       changes:
         - insert:
             tableName: users
