@@ -1,0 +1,57 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+  userservice:
+    build:
+      context: .
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+      - 8080:8080
+    depends_on:
+      postgres:
+         condition: service_healthy
+      redis:
+        condition: service_started
+
+  postgres:
+     image: postgres:18-alpine
+     restart: always
+     user: postgres
+     secrets:
+       - db-password
+     volumes:
+       - db-data:/var/lib/postgresql/data
+     environment:
+       - POSTGRES_DB=userdb
+       - POSTGRES_USER=prod
+       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+     expose:
+       - 5432
+     healthcheck:
+       test: ["CMD", "pg_isready", "-U", "prod", "-d", "userdb"]
+       interval: 10s
+       timeout: 5s
+       retries: 5
+
+  redis:
+    image: redis:8.2.2-alpine
+    container_name: redis
+    expose:
+      - 6379
+    volumes:
+      - redis-data:/data
+
+volumes:
+  db-data:
+  redis-data:
+secrets:
+  db-password:
+    file: db/password.txt

@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/userdb
+    username: prod
+    password: supersecretpassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: false
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+logging:
+  file:
+    name: logs/app.log
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: WARN
