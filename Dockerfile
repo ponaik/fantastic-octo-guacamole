@@ -40,6 +40,8 @@ RUN java -Djarmode=layertools -jar target/app.jar extract --destination target/e
 # runtime dependencies for the application.
 FROM eclipse-temurin:21-jre-jammy AS final
 
+WORKDIR /app
+
 # Create a non-privileged user that the app will run under.
 ARG UID=10001
 RUN adduser \
