@@ -1,4 +1,4 @@
-package com.intern.userservice.integration;
+package com.intern.userservice.integration.extension;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;

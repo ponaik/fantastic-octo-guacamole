@@ -1,4 +1,4 @@
-package com.intern.userservice.service;
+package com.intern.userservice.unit.service;
 
 import com.intern.userservice.dto.UserCreateDto;
 import com.intern.userservice.dto.UserResponse;
@@ -7,8 +7,10 @@ import com.intern.userservice.exception.EmailAlreadyExistsException;
 import com.intern.userservice.mapper.UserMapper;
 import com.intern.userservice.model.User;
 import com.intern.userservice.repository.UserRepository;
+import com.intern.userservice.service.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,6 +33,7 @@ import static org.mockito.BDDMockito.willAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+@Tag("unit")
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 

@@ -1,4 +1,4 @@
-package com.intern.userservice.service;
+package com.intern.userservice.unit.service;
 
 import com.intern.userservice.dto.CardInfoCreateDto;
 import com.intern.userservice.dto.CardInfoResponse;
@@ -7,13 +7,14 @@ import com.intern.userservice.mapper.CardInfoMapper;
 import com.intern.userservice.model.CardInfo;
 import com.intern.userservice.repository.CardInfoRepository;
 import com.intern.userservice.repository.UserRepository;
+import com.intern.userservice.service.CardInfoServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,10 +24,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+@Tag("unit")
 @ExtendWith(MockitoExtension.class)
 class CardInfoServiceImplTest {
 
