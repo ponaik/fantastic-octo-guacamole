@@ -15,9 +15,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: SonarQubeScan
-        uses: SonarSource/sonarqube-scan-action@v6
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=test-intern_userservice
 #  build-and-test:
 #    runs-on: ubuntu-latest
 #    env:
