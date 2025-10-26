@@ -20,6 +20,7 @@
         <java.version>21</java.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok.version>1.18.42</lombok.version>
+        <sonar.organization>ponaik-int-group</sonar.organization>
     </properties>
 
     <dependencies>
