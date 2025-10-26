@@ -55,6 +55,18 @@ jobs:
 #          SPRING_PROFILES_ACTIVE: test
 #        run: ./mvnw -B verify -DskipUnitTests=true
 
+      - name: SonarQube analysis
+        if: ${{ secrets.SONAR_TOKEN != '' && secrets.SONAR_HOST_URL != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./mvnw -B -DskipTests \
+            -Dsonar.host.url=${SONAR_HOST_URL} \
+            -Dsonar.login=${SONAR_TOKEN} \
+            sonar:sonar
+
       - name: Package application
         run: ./mvnw -B -DskipTests package
 
