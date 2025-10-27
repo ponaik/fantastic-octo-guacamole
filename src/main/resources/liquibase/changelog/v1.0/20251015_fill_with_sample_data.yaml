@@ -1,0 +1,124 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20251015-insert-users
+      author: ioann_yaromenka
+      context: test
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: name, value: "Alice" }
+              - column: { name: surname, value: "Johnson" }
+              - column: { name: birth_date, valueDate: "1990-04-12" }
+              - column: { name: email, value: "alice.johnson@example.com" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 2 }
+              - column: { name: name, value: "Bob" }
+              - column: { name: surname, value: "Smith" }
+              - column: { name: birth_date, valueDate: "1985-09-23" }
+              - column: { name: email, value: "bob.smith@example.com" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 3 }
+              - column: { name: name, value: "Clara" }
+              - column: { name: surname, value: "Miller" }
+              - column: { name: birth_date, valueDate: "1992-01-05" }
+              - column: { name: email, value: "clara.miller@example.com" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 4 }
+              - column: { name: name, value: "David" }
+              - column: { name: surname, value: "Brown" }
+              - column: { name: birth_date, valueDate: "1978-07-30" }
+              - column: { name: email, value: "david.brown@example.com" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 5 }
+              - column: { name: name, value: "Eva" }
+              - column: { name: surname, value: "Davis" }
+              - column: { name: birth_date, valueDate: "1995-11-18" }
+              - column: { name: email, value: "eva.davis@example.com" }
+
+  - changeSet:
+      id: 20251015-insert-card-info
+      author: ioann_yaromenka
+      changes:
+        # Alice has 2 cards
+        - insert:
+            tableName: card_info
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: number, value: "4111111111111111" }
+              - column: { name: holder, value: "Alice Johnson" }
+              - column: { name: expiration_date, valueDate: "2026-05-31" }
+        - insert:
+            tableName: card_info
+            columns:
+              - column: { name: id, valueNumeric: 2 }
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: number, value: "5500000000000004" }
+              - column: { name: holder, value: "Alice Johnson" }
+              - column: { name: expiration_date, valueDate: "2027-08-31" }
+
+        # Bob has 1 card
+        - insert:
+            tableName: card_info
+            columns:
+              - column: { name: id, valueNumeric: 3 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: number, value: "4000123412341234" }
+              - column: { name: holder, value: "Bob Smith" }
+              - column: { name: expiration_date, valueDate: "2026-12-31" }
+
+        # Clara has 3 cards
+        - insert:
+            tableName: card_info
+            columns:
+              - column: { name: id, valueNumeric: 4 }
+              - column: { name: user_id, valueNumeric: 3 }
+              - column: { name: number, value: "6011000990139424" }
+              - column: { name: holder, value: "Clara Miller" }
+              - column: { name: expiration_date, valueDate: "2025-09-30" }
+        - insert:
+            tableName: card_info
+            columns:
+              - column: { name: id, valueNumeric: 5 }
+              - column: { name: user_id, valueNumeric: 3 }
+              - column: { name: number, value: "3530111333300000" }
+              - column: { name: holder, value: "Clara Miller" }
+              - column: { name: expiration_date, valueDate: "2028-01-31" }
+        - insert:
+            tableName: card_info
+            columns:
+              - column: { name: id, valueNumeric: 6 }
+              - column: { name: user_id, valueNumeric: 3 }
+              - column: { name: number, value: "2223000048400011" }
+              - column: { name: holder, value: "Clara Miller" }
+              - column: { name: expiration_date, valueDate: "2029-03-31" }
+
+        # David has no cards (to show variation)
+
+        # Eva has 2 cards
+        - insert:
+            tableName: card_info
+            columns:
+              - column: { name: id, valueNumeric: 7 }
+              - column: { name: user_id, valueNumeric: 5 }
+              - column: { name: number, value: "5105105105105100" }
+              - column: { name: holder, value: "Eva Davis" }
+              - column: { name: expiration_date, valueDate: "2026-07-31" }
+        - insert:
+            tableName: card_info
+            columns:
+              - column: { name: id, valueNumeric: 8 }
+              - column: { name: user_id, valueNumeric: 5 }
+              - column: { name: number, value: "4111111111112222" }
+              - column: { name: holder, value: "Eva Davis" }
+              - column: { name: expiration_date, valueDate: "2027-10-31" }

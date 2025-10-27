@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202051020-reset-users-sequence
+      author: ioann_yaromenka
+      changes:
+        - sql:
+            sql: >
+              SELECT setval('users_id_seq', (SELECT COALESCE(MAX(id), 1) FROM users));
+
+  - changeSet:
+      id: 202051020-reset-card-info-sequence
+      author: ioann_yaromenka
+      changes:
+        - sql:
+            sql: >
+              SELECT setval('card_info_id_seq', (SELECT COALESCE(MAX(id), 1) FROM card_info));
