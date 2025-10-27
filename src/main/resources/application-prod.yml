@@ -1,4 +1,12 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${DB_SCHEMA}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
   jpa:
     show-sql: false
 
