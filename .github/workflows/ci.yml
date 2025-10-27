@@ -20,32 +20,25 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-#      - name: Cache Maven repository
-#              uses: actions/cache@v4
-#              with:
-#                path: ~/.m2/repository
-#                key: maven-${{ hashFiles('**/pom.xml') }}
-#                restore-keys: maven-
-
       - name: Install mvnw executable
         run: chmod +x ./mvnw
 
-#      - name: Run Unit Tests
-#        run: ./mvnw -B test -Dgroups=unit
-#
-#      - name: Run Integration Tests and SonarQubeScan
-#        env:
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-#          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
-#          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
-#        run: |
-#          ./mvnw -B verify -Dgroups=integration \
-#            sonar:sonar \
-#            -Dsonar.host.url=${SONAR_HOST_URL} \
-#            -Dsonar.organization=${SONAR_ORGANIZATION} \
-#            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-#            -Dsonar.token=${SONAR_TOKEN}
+      - name: Run Unit Tests
+        run: ./mvnw -B test -Dgroups=unit
+
+      - name: Run Integration Tests and SonarQubeScan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+        run: |
+          ./mvnw -B verify -Dgroups=integration \
+            sonar:sonar \
+            -Dsonar.host.url=${SONAR_HOST_URL} \
+            -Dsonar.organization=${SONAR_ORGANIZATION} \
+            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+            -Dsonar.token=${SONAR_TOKEN}
 
       - name: Package application
         run: ./mvnw -B -DskipTests package
@@ -59,7 +52,10 @@ jobs:
   build-and-push-image:
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: needs.build-and-test.result == 'success'
+    if: |
+      needs.build-and-test.result == 'success' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
     permissions:
       contents: read
       packages: write
@@ -85,9 +81,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          # If you prefer a PAT replace above with:
-          # username: YOUR_USERNAME
-          # password: ${{ secrets.DOCKER_PUSH_PAT }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4

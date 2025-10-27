@@ -9,8 +9,7 @@
 # https://github.com/docker/awesome-compose
 services:
   userservice:
-    build:
-      context: .
+    image: ghcr.io/ponaik/fantastic-octo-guacamole:bd56028e3fff013bd3d807ad05933f389452ddec
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_SCHEMA}
