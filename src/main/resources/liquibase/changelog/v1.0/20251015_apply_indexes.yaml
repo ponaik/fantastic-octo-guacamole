@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20251015-create-users-email-unique-index
+      author: ioann_yaromenka
+      changes:
+        - createIndex:
+            indexName: idx_users_email
+            tableName: users
+            unique: true
+            columns:
+              - column:
+                  name: email
+
+  - changeSet:
+      id: 20251015-create-cardinfo-userid-index
+      author: ioann_yaromenka
+      changes:
+        - createIndex:
+            indexName: idx_cardinfo_userid
+            tableName: card_info
+            columns:
+              - column:
+                  name: user_id
