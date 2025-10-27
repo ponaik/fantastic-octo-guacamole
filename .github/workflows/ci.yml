@@ -25,7 +25,7 @@ jobs:
         run: chmod +x ./mvnw
 
       - name: Run Unit Tests
-        run: ./mvnw -B verify -Punit
+        run: ./mvnw -B test -Dgroups=unit
 
   integration-tests:
     name: Integration Tests + SonarQube
@@ -52,7 +52,7 @@ jobs:
 
       - name: Run Integration Tests and SonarQube Scan
         run: |
-          ./mvnw -B verify -Pintegration -DskipUnitTests=true \ 
+          ./mvnw -B verify -Dgroups=integration -DskipUnitTests=true \
             sonar:sonar \
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.organization=${SONAR_ORGANIZATION} \
