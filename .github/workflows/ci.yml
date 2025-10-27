@@ -49,32 +49,21 @@ jobs:
         run: chmod +x ./mvnw
 
       - name: Run tests
-        run: ./mvnw -B test
-
-#      - name: Run integration tests
-#        env:
-#          SPRING_PROFILES_ACTIVE: test
-#        run: ./mvnw -B verify -DskipUnitTests=true
+        run: ./mvnw -B verify -Punit
 
       - name: Integration tests and SonarQubeScan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
         run: |
-          ./mvnw -B verify -DskipUnitTests=true sonar:sonar \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.organization=test-intern \
-            -Dsonar.projectKey=test-intern_userservice
-
-#      - name: SonarQube analysis
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#        run: |
-#          ./mvnw -B -DskipTests \
-#            -Dsonar.host.url=${SONAR_HOST_URL} \
-#            -Dsonar.login=${SONAR_TOKEN} \
-#            sonar:sonar
+          ./mvnw -B verify -Pintegration -DskipUnitTests=true \ 
+            sonar:sonar \
+            -Dsonar.host.url=${SONAR_HOST_URL} \
+            -Dsonar.organization=${SONAR_ORGANIZATION} \
+            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+            -Dsonar.login=${SONAR_TOKEN}
 
       - name: Package application
         run: ./mvnw -B -DskipTests package
