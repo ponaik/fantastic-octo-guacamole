@@ -20,27 +20,12 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-#      - name: Cache Gradle (placeholder)
-#        if: false
-#        run: echo "no-op"
-#
-#      - name: Cache Docker buildx (for later docker cache)
-#        uses: actions/cache@v4
-#        with:
-#          path: ~/.cache/docker
-#          key: ${{ runner.os }}-docker-cache-${{ github.sha }}
-#          restore-keys: |
-#            ${{ runner.os }}-docker-cache-
-#
 #      - name: Cache Maven repository
-#        uses: actions/cache@v4
-#        with:
-#          path: ~/.m2/repository
-#          key: maven-${{ hashFiles('**/pom.xml') }}
-#          restore-keys: maven-
-#
-#      - name: Set up QEMU and Docker Buildx
-#        uses: docker/setup-buildx-action@v2
+#              uses: actions/cache@v4
+#              with:
+#                path: ~/.m2/repository
+#                key: maven-${{ hashFiles('**/pom.xml') }}
+#                restore-keys: maven-
 
       - name: Install mvnw executable
         run: chmod +x ./mvnw
