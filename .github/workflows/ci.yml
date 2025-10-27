@@ -60,8 +60,8 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./mvnw -B verify -DskipUnitTests=true sonar:sonar \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.organization=test-intern \
+#          -Dsonar.host.url=https://sonarcloud.io \
+#          -Dsonar.organization=test-intern \
           -Dsonar.projectKey=test-intern_userservice
 
 #      - name: SonarQube analysis
