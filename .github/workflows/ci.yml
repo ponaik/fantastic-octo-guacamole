@@ -59,8 +59,7 @@ jobs:
       - name: Integration tests and SonarQubeScan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./mvnw -B verify -DskipUnitTests=true \
-          org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+        run: ./mvnw -B verify -DskipUnitTests=true sonar:sonar \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.organization=test-intern \
           -Dsonar.projectKey=test-intern_userservice
