@@ -21,8 +21,11 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
+      - name: Install mvnw executable
+        run: chmod +x ./mvnw
+
       - name: Run Unit Tests
-        run: ./mvnw -B test
+        run: ./mvnw -B verify -Punit
 
   integration-tests:
     name: Integration Tests + SonarQube
@@ -44,9 +47,13 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
+      - name: Install mvnw executable
+        run: chmod +x ./mvnw
+
       - name: Run Integration Tests and SonarQube Scan
         run: |
-          ./mvnw -B verify -DskipUnitTests=true sonar:sonar \
+          ./mvnw -B verify -Pintegration -DskipUnitTests=true \ 
+            sonar:sonar \
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.organization=${SONAR_ORGANIZATION} \
             -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
