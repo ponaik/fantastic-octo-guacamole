@@ -49,6 +49,11 @@ jobs:
         run: ./mvnw -B test -Dgroups=unit
 
       - name: Run Integration Tests and SonarQubeScan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
         run: |
           ./mvnw -B verify -Dgroups=integration \
             sonar:sonar \
