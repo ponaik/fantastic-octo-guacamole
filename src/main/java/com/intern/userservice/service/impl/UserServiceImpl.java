@@ -45,6 +45,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User created = userRepository.createUserNative(
+                request.sub(),
                 request.name(),
                 request.surname(),
                 request.birthDate(),

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -17,7 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "VALUES (:name, :surname, :birthDate, :email) " +
             "RETURNING *",
             nativeQuery = true)
-    User createUserNative(@Param("name") String name,
+    User createUserNative(@Param("sub") UUID sub,
+                          @Param("name") String name,
                           @Param("surname") String surname,
                           @Param("birthDate") LocalDate birthDate,
                           @Param("email") String email);
@@ -46,6 +48,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+
 
 //    Named methods
 //    Pagination is built-in from PagingAndSortingRepository<T, ID>

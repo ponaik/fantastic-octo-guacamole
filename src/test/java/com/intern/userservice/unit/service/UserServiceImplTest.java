@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -69,6 +70,7 @@ class UserServiceImplTest {
         );
 
         createDto = new UserCreateDto(
+                UUID.fromString("00000000-0000-0000-0000-000000000000"),
                 "Alice",
                 "Wonder",
                 LocalDate.of(1990, 1, 1),
@@ -88,6 +90,7 @@ class UserServiceImplTest {
     void createUser_whenEmailDoesNotExist_createsAndReturnsResponse() {
         given(userRepository.existsByEmail("alice@example.com")).willReturn(false);
         given(userRepository.createUserNative(
+                UUID.fromString("00000000-0000-0000-0000-000000000000"),
                 "Alice",
                 "Wonder",
                 LocalDate.of(1990, 1, 1),
@@ -101,6 +104,7 @@ class UserServiceImplTest {
 
         verify(userRepository).existsByEmail("alice@example.com");
         verify(userRepository).createUserNative(
+                UUID.fromString("00000000-0000-0000-0000-000000000000"),
                 "Alice",
                 "Wonder",
                 LocalDate.of(1990, 1, 1),
@@ -118,7 +122,7 @@ class UserServiceImplTest {
                 .hasMessageContaining("alice@example.com");
 
         verify(userRepository).existsByEmail("alice@example.com");
-        verify(userRepository, never()).createUserNative(any(), any(), any(), any());
+        verify(userRepository, never()).createUserNative(any(), any(), any(), any(), any());
     }
 
 

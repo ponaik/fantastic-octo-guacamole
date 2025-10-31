@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,6 +28,7 @@ class UserRepositoryPostgresIntegrationTest {
     @Transactional
     void testCreateUserNative() {
         User created = userRepository.createUserNative(
+                UUID.fromString("00000000-0000-0000-0000-000000000000"),
                 "George",
                 "Washington",
                 LocalDate.of(1980, 2, 22),
@@ -74,6 +76,7 @@ class UserRepositoryPostgresIntegrationTest {
     void testExistsByEmail() {
         // Create a user
         userRepository.createUserNative(
+                UUID.fromString("00000000-0000-0000-0000-000000000000"),
                 "Isaac",
                 "Newton",
                 LocalDate.of(1643, 1, 4),

@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,7 +59,7 @@ class CardInfoServiceRedisPostgresIntegrationTest {
     @Transactional
     void createCard_shouldPersistAndCache() {
         // given
-        User user = userRepository.createUserNative("John", "Doe", LocalDate.of(1990,1,1), "john@example.com");
+        User user = userRepository.createUserNative(UUID.fromString("00000000-0000-0000-0000-000000000000"),"John", "Doe", LocalDate.of(1990,1,1), "john@example.com");
         CardInfoCreateDto dto = new CardInfoCreateDto("1234-5678", "John Doe", LocalDate.of(2030,1,1), user.getId());
 
         // when
@@ -72,7 +73,7 @@ class CardInfoServiceRedisPostgresIntegrationTest {
     @Test
     @Transactional
     void getCardById_shouldReturnAndCache() {
-        User user = userRepository.createUserNative("Jane", "Smith", LocalDate.of(1995,5,5), "jane@example.com");
+        User user = userRepository.createUserNative(UUID.fromString("00000000-0000-0000-0000-000000000000"),"Jane", "Smith", LocalDate.of(1995,5,5), "jane@example.com");
         CardInfoResponse created = cardInfoService.createCard(
                 new CardInfoCreateDto("1111-2222", "Jane Smith", LocalDate.of(2031,1,1), user.getId()));
 
@@ -85,7 +86,7 @@ class CardInfoServiceRedisPostgresIntegrationTest {
     @Test
     @Transactional
     void getCardsByUserId_shouldReturnAndCache() {
-        User user = userRepository.createUserNative("Tom", "Jerry", LocalDate.of(1988,8,8), "tom@example.com");
+        User user = userRepository.createUserNative(UUID.fromString("00000000-0000-0000-0000-000000000000"),"Tom", "Jerry", LocalDate.of(1988,8,8), "tom@example.com");
         cardInfoService.createCard(new CardInfoCreateDto("2222-3333", "Tom Jerry", LocalDate.of(2032,1,1), user.getId()));
 
         List<CardInfoResponse> cards = cardInfoService.getCardsByUserId(user.getId());
@@ -97,7 +98,7 @@ class CardInfoServiceRedisPostgresIntegrationTest {
     @Test
     @Transactional
     void getAllCards_shouldReturnAndCache() {
-        User user = userRepository.createUserNative("Alice", "Wonder", LocalDate.of(1992,2,2), "alice@example.com");
+        User user = userRepository.createUserNative(UUID.fromString("00000000-0000-0000-0000-000000000000"),"Alice", "Wonder", LocalDate.of(1992,2,2), "alice@example.com");
         cardInfoService.createCard(new CardInfoCreateDto("3333-4444", "Alice Wonder", LocalDate.of(2033,1,1), user.getId()));
 
         Page<CardInfoResponse> page = cardInfoService.getAllCards(PageRequest.of(0, 10));
@@ -109,7 +110,7 @@ class CardInfoServiceRedisPostgresIntegrationTest {
     @Test
     @Transactional
     void deleteCardById_shouldRemoveAndEvictCache() {
-        User user = userRepository.createUserNative("Del", "User", LocalDate.of(1970,1,1), "del@example.com");
+        User user = userRepository.createUserNative(UUID.fromString("00000000-0000-0000-0000-000000000000"),"Del", "User", LocalDate.of(1970,1,1), "del@example.com");
         CardInfoResponse created = cardInfoService.createCard(
                 new CardInfoCreateDto("4444-5555", "Del User", LocalDate.of(2034,1,1), user.getId()));
 
