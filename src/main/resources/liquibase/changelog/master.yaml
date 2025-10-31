@@ -17,3 +17,5 @@ databaseChangeLog:
   - include:
       file: v1.1/20251021_cardinfo_schema_update.yaml
       relativeToChangelogFile: true
+  - include:
+      file: v1.2/20251021_users_add_subuuid_and_index.yaml

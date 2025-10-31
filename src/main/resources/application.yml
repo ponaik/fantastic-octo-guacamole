@@ -33,4 +33,5 @@ logging:
   level:
     root: INFO
     org.springframework.web: INFO
+    org.springframework.security: INFO
     org.hibernate.SQL: WARN

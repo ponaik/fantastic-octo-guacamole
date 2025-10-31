@@ -6,6 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -21,6 +22,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
+
+    @Column(nullable = false, unique = true)
+    private UUID sub;
 
     @Column(nullable = false, length = 100)
     private String name;
