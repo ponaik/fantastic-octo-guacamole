@@ -7,6 +7,7 @@ import com.intern.userservice.service.UserService;
 import jakarta.validation.constraints.Email;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,12 +30,14 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('admin') or hasAuthority('SCOPE_create')")
     public ResponseEntity<UserResponse> createUser(@Validated @RequestBody UserCreateDto request) {
         UserResponse created = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('admin') or @securityService.isOwnerByUserId(#id)")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         Optional<UserResponse> user = userService.getUserById(id);
         return user.map(ResponseEntity::ok)
@@ -42,12 +45,14 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Page<UserResponse>> getAllUsers(Pageable pageable) {
         Page<UserResponse> users = userService.getAllUsers(pageable);
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasRole('admin') or @securityService.isOwnerByEmail(#email)")
     public ResponseEntity<UserResponse> getUserByEmail(@Email @RequestParam String email) {
         Optional<UserResponse> user = userService.getUserByEmail(email);
         return user.map(ResponseEntity::ok)
@@ -55,6 +60,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('admin') or @securityService.isOwnerByUserId(#id)")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id,
                                                    @Validated @RequestBody UserUpdateDto request) {
         UserResponse updated = userService.updateUser(id, request);
@@ -62,6 +68,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('admin') or @securityService.isOwnerByUserId(#id)")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();

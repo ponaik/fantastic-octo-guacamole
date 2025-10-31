@@ -26,6 +26,7 @@ public class UserSecurity implements AuthorizationManager<RequestAuthorizationCo
     public AuthorizationResult authorize(Supplier<Authentication> authenticationSupplier, RequestAuthorizationContext ctx) {
         // get {userId} from the request
         Long userId = Long.parseLong(ctx.getVariables().get("userId"));
+
         Authentication authentication = (Authentication) authenticationSupplier.get();
         return new AuthorizationDecision(hasUserId(authentication, userId));
     }
