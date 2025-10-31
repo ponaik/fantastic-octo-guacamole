@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,7 +59,7 @@ class UserServiceRedisPostgresIntegrationTest {
     @Test
     @Transactional
     void createUser_shouldPersistAndCache() {
-        UserCreateDto dto = new UserCreateDto(UUID.fromString("00000000-0000-0000-0000-000000000000"),"John", "Doe", LocalDate.of(1990,1,1), "john@example.com");
+        UserCreateDto dto = new UserCreateDto("John", "Doe", LocalDate.of(1990,1,1), "john@example.com");
 
         UserResponse response = userService.createUser(dto);
 
@@ -72,7 +71,7 @@ class UserServiceRedisPostgresIntegrationTest {
     @Test
     @Transactional
     void getUserById_shouldReturnAndCache() {
-        UserCreateDto dto = new UserCreateDto(UUID.fromString("00000000-0000-0000-0000-000000000000"),"Jane", "Smith", LocalDate.of(1995,5,5), "jane@example.com");
+        UserCreateDto dto = new UserCreateDto("Jane", "Smith", LocalDate.of(1995,5,5), "jane@example.com");
         UserResponse created = userService.createUser(dto);
 
         Optional<UserResponse> response = userService.getUserById(created.id());
@@ -85,7 +84,7 @@ class UserServiceRedisPostgresIntegrationTest {
     @Test
     @Transactional
     void getAllUsers_shouldCachePage() {
-        userService.createUser(new UserCreateDto(UUID.fromString("00000000-0000-0000-0000-000000000000"),"A", "B", LocalDate.of(2000,1,1), "a@example.com"));
+        userService.createUser(new UserCreateDto("A", "B", LocalDate.of(2000,1,1), "a@example.com"));
 
         Page<UserResponse> page = userService.getAllUsers(PageRequest.of(0, 10));
 
@@ -96,7 +95,7 @@ class UserServiceRedisPostgresIntegrationTest {
     @Test
     @Transactional
     void getUserByEmail_shouldReturnAndCache() {
-        userService.createUser(new UserCreateDto(UUID.fromString("00000000-0000-0000-0000-000000000000"),"Tom", "Jerry", LocalDate.of(1988,8,8), "tom@example.com"));
+        userService.createUser(new UserCreateDto("Tom", "Jerry", LocalDate.of(1988,8,8), "tom@example.com"));
 
         Optional<UserResponse> response = userService.getUserByEmail("tom@example.com");
 
@@ -109,7 +108,7 @@ class UserServiceRedisPostgresIntegrationTest {
     @Transactional
     void updateUser_shouldUpdateAndRefreshCache() {
         UserResponse created = userService.createUser(
-                new UserCreateDto(UUID.fromString("00000000-0000-0000-0000-000000000000"),"Old", "Name", LocalDate.of(1980,1,1), "old@example.com"));
+                new UserCreateDto("Old", "Name", LocalDate.of(1980,1,1), "old@example.com"));
 
         UserUpdateDto dto = new UserUpdateDto("New", "Name", LocalDate.of(1980,1,1), "new@example.com");
         UserResponse updated = userService.updateUser(created.id(), dto);
@@ -123,7 +122,7 @@ class UserServiceRedisPostgresIntegrationTest {
     @Transactional
     void deleteUser_shouldRemoveFromDbAndEvictCache() {
         UserResponse created = userService.createUser(
-                new UserCreateDto(UUID.fromString("00000000-0000-0000-0000-000000000000"),"Del", "User", LocalDate.of(1970,1,1), "del@example.com"));
+                new UserCreateDto("Del", "User", LocalDate.of(1970,1,1), "del@example.com"));
         cardInfoRepository.createCardNative("1234-5678", "John Doe", LocalDate.of(2030, 1, 1), created.id());
 
         userService.getUserById(created.id()); // populate cache
