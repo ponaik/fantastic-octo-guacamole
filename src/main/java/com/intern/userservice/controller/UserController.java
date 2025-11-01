@@ -5,15 +5,14 @@ import com.intern.userservice.dto.UserResponse;
 import com.intern.userservice.dto.UserUpdateDto;
 import com.intern.userservice.service.UserService;
 import jakarta.validation.constraints.Email;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -30,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('admin') or hasAuthority('SCOPE_create')")
+    @PreAuthorize("hasRole('admin') or #request.sub() == @securityService.getUuid()")
     public ResponseEntity<UserResponse> createUser(@Validated @RequestBody UserCreateDto request) {
         UserResponse created = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);

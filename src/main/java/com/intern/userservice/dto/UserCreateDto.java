@@ -5,6 +5,9 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record UserCreateDto(
+        @NotNull(message = "sub is required")
+        UUID sub,
+
         @NotBlank(message = "Name is required")
         @Size(min = 2, max = 100, message = "Invalid name length")
         String name,

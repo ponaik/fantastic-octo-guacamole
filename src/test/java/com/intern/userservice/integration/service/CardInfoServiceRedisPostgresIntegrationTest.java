@@ -17,6 +17,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Tag("integration")
+@ActiveProfiles("test")
 @ExtendWith({RedisTestContainerExtension.class, PostgresTestContainerExtension.class})
 class CardInfoServiceRedisPostgresIntegrationTest {
 

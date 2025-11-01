@@ -7,7 +7,6 @@ import com.intern.userservice.exception.EmailAlreadyExistsException;
 import com.intern.userservice.mapper.UserMapper;
 import com.intern.userservice.model.User;
 import com.intern.userservice.repository.UserRepository;
-import com.intern.userservice.security.SecurityService;
 import com.intern.userservice.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +16,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +27,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final SecurityService securityService;
 
     @Transactional
     @Override
@@ -48,14 +44,8 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyExistsException(request.email());
         }
 
-        UUID sub = securityService.getUuid();
-
-        if (sub == null) {
-            throw new AccessDeniedException("Missing or invalid token subject");
-        }
-
         User created = userRepository.createUserNative(
-                sub,
+                request.sub(),
                 request.name(),
                 request.surname(),
                 request.birthDate(),

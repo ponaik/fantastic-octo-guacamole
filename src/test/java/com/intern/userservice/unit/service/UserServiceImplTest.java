@@ -7,7 +7,6 @@ import com.intern.userservice.exception.EmailAlreadyExistsException;
 import com.intern.userservice.mapper.UserMapper;
 import com.intern.userservice.model.User;
 import com.intern.userservice.repository.UserRepository;
-import com.intern.userservice.security.SecurityService;
 import com.intern.userservice.service.impl.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,9 +37,6 @@ import static org.mockito.Mockito.verify;
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-
-    @Mock
-    private SecurityService securityService;
 
     @Mock
     private UserRepository userRepository;
@@ -74,6 +70,7 @@ class UserServiceImplTest {
         );
 
         createDto = new UserCreateDto(
+                UUID.fromString("00000000-0000-0000-0000-000000000000"),
                 "Alice",
                 "Wonder",
                 LocalDate.of(1990, 1, 1),
@@ -92,7 +89,6 @@ class UserServiceImplTest {
     @Test
     void createUser_whenEmailDoesNotExist_createsAndReturnsResponse() {
         given(userRepository.existsByEmail("alice@example.com")).willReturn(false);
-        given(securityService.getUuid()).willReturn(UUID.fromString("00000000-0000-0000-0000-000000000000"));
         given(userRepository.createUserNative(
                 UUID.fromString("00000000-0000-0000-0000-000000000000"),
                 "Alice",
