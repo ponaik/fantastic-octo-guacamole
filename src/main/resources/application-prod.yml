@@ -10,10 +10,17 @@ spring:
   jpa:
     show-sql: false
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH_ISSUER_URI}
+
 logging:
   file:
     name: logs/app.log
   level:
     root: INFO
     org.springframework.web: INFO
+    org.springframework.security: DEBUG
     org.hibernate.SQL: WARN

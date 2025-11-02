@@ -32,5 +32,4 @@ logging:
   level:
     root: INFO
     org.springframework.web: INFO
-    org.springframework.security: DEBUG
     org.hibernate.SQL: WARN
