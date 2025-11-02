@@ -5,7 +5,6 @@ import com.intern.userservice.model.CardInfo;
 import com.intern.userservice.model.User;
 import com.intern.userservice.repository.CardInfoRepository;
 import com.intern.userservice.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,27 +35,20 @@ class CardInfoRepositoryPostgresIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    private User sharedUser;
+    private User createTestUser(String name, String surname, LocalDate dob) {
+        String email = name.toLowerCase() + "." + surname.toLowerCase() + "+" + UUID.randomUUID() + "@example.com";
+        return userRepository.createUserNative(UUID.randomUUID(), name, surname, dob, email);
+    }
 
-    @BeforeEach
-    void setUpOnce() {
-        sharedUser = userRepository.createUserNative(
-                UUID.randomUUID(),
-                "Shared",
-                "User",
-                LocalDate.of(1990, 1, 1),
-                "shared.user@example.com"
-        );
+    private CardInfo createTestCard(String number, String holder, LocalDate expires, Long userId) {
+        return cardInfoRepository.createCardNative(number, holder, expires, userId);
     }
 
     @Test
     void testCreateCardNative() {
-        CardInfo created = cardInfoRepository.createCardNative(
-                "1234567890123456",
-                "Test Holder",
-                LocalDate.of(2030, 12, 31),
-                sharedUser.getId()
-        );
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        CardInfo created = createTestCard("1234567890123456", "Test Holder", LocalDate.of(2030, 12, 31), user.getId());
 
         assertThat(created.getId()).isNotNull();
         assertThat(created.getHolder()).isEqualTo("Test Holder");
@@ -68,12 +60,9 @@ class CardInfoRepositoryPostgresIntegrationTest {
 
     @Test
     void testFindByIdNative() {
-        CardInfo card = cardInfoRepository.createCardNative(
-                "4111111111111111",
-                "Shared User",
-                LocalDate.of(2028, 6, 30),
-                sharedUser.getId()
-        );
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        CardInfo card = createTestCard("4111111111111111", "Shared User", LocalDate.of(2028, 6, 30), user.getId());
 
         Optional<CardInfo> fetched = cardInfoRepository.findByIdNative(card.getId());
         assertThat(fetched).isPresent();
@@ -83,12 +72,9 @@ class CardInfoRepositoryPostgresIntegrationTest {
 
     @Test
     void testDeleteByIdNative() {
-        CardInfo cardToDelete = cardInfoRepository.createCardNative(
-                "5555444433332222",
-                "To Delete",
-                LocalDate.of(2029, 7, 31),
-                sharedUser.getId()
-        );
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        CardInfo cardToDelete = createTestCard("5555444433332222", "To Delete", LocalDate.of(2029, 7, 31), user.getId());
 
         int deleted = cardInfoRepository.deleteByIdNative(cardToDelete.getId());
         assertThat(deleted).isEqualTo(1);
@@ -99,20 +85,23 @@ class CardInfoRepositoryPostgresIntegrationTest {
 
     @Test
     void testGetCardInfosByUserId() {
-        // create two cards for shared user
-        cardInfoRepository.createCardNative("4111111111111111", "Shared User", LocalDate.of(2028, 6, 30), sharedUser.getId());
-        cardInfoRepository.createCardNative("4222222222222222", "Shared User", LocalDate.of(2029, 6, 30), sharedUser.getId());
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
 
-        List<CardInfo> cards = cardInfoRepository.getCardInfosByUserId(sharedUser.getId());
+        createTestCard("4111111111111111", "Shared User", LocalDate.of(2028, 6, 30), user.getId());
+        createTestCard("4222222222222222", "Shared User", LocalDate.of(2029, 6, 30), user.getId());
+
+        List<CardInfo> cards = cardInfoRepository.getCardInfosByUserId(user.getId());
         assertThat(cards).hasSizeGreaterThanOrEqualTo(2);
     }
 
     @Test
     void testExistsCardInfoByUserIdAndNumber() {
-        cardInfoRepository.createCardNative("4111111111111111", "Shared User", LocalDate.of(2028, 6, 30), sharedUser.getId());
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
 
-        boolean exists = cardInfoRepository.existsCardInfoByUserIdAndNumber(sharedUser.getId(), "4111111111111111");
-        boolean notExists = cardInfoRepository.existsCardInfoByUserIdAndNumber(sharedUser.getId(), "nonexistent");
+        createTestCard("4111111111111111", "Shared User", LocalDate.of(2028, 6, 30), user.getId());
+
+        boolean exists = cardInfoRepository.existsCardInfoByUserIdAndNumber(user.getId(), "4111111111111111");
+        boolean notExists = cardInfoRepository.existsCardInfoByUserIdAndNumber(user.getId(), "nonexistent");
 
         assertThat(exists).isTrue();
         assertThat(notExists).isFalse();
@@ -120,12 +109,9 @@ class CardInfoRepositoryPostgresIntegrationTest {
 
     @Test
     void testFindByIdNamedMethod() {
-        CardInfo card = cardInfoRepository.createCardNative(
-                "4222222222222222",
-                "Shared User",
-                LocalDate.of(2029, 6, 30),
-                sharedUser.getId()
-        );
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        CardInfo card = createTestCard("4222222222222222", "Shared User", LocalDate.of(2029, 6, 30), user.getId());
 
         Optional<CardInfo> fetched = cardInfoRepository.findById(card.getId());
         assertThat(fetched).isPresent();
@@ -134,12 +120,9 @@ class CardInfoRepositoryPostgresIntegrationTest {
 
     @Test
     void testDeleteByIdNamedMethod() {
-        CardInfo card = cardInfoRepository.createCardNative(
-                "6666777788889999",
-                "Shared User Delete",
-                LocalDate.of(2031, 8, 31),
-                sharedUser.getId()
-        );
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        CardInfo card = createTestCard("6666777788889999", "Shared User Delete", LocalDate.of(2031, 8, 31), user.getId());
 
         cardInfoRepository.deleteById(card.getId());
         Optional<CardInfo> shouldBeEmpty = cardInfoRepository.findById(card.getId());
@@ -148,10 +131,11 @@ class CardInfoRepositoryPostgresIntegrationTest {
 
     @Test
     void testFindAllWithPagination() {
-        // create 8 cards for predictable total (all assigned to the shared user)
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
         for (int i = 0; i < 8; i++) {
             String number = String.format("70000000000000%02d", i);
-            cardInfoRepository.createCardNative(number, "Holder" + i, LocalDate.of(2030, 1, 1), sharedUser.getId());
+            createTestCard(number, "Holder" + i, LocalDate.of(2030, 1, 1), user.getId());
         }
 
         Pageable pageable = org.springframework.data.domain.PageRequest.of(0, 3);
