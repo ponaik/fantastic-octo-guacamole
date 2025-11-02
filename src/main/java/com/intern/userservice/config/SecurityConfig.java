@@ -2,22 +2,29 @@ package com.intern.userservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.security.oauth2.jwt.NimbusJwtDecoder.withJwkSetUri;
 
+@Profile("!test")
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -39,34 +46,40 @@ public class SecurityConfig {
         return http.build();
     }
 
-    private JwtAuthenticationConverter jwtAuthenticationConverter() {
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+
+        JwtGrantedAuthoritiesConverter scopeConverter = new JwtGrantedAuthoritiesConverter();
+        scopeConverter.setAuthorityPrefix("SCOPE_");
+
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-            // Example: extract roles from Keycloak's "realm_access.roles" claim
-            Object realmAccess = jwt.getClaim("realm_access");
-            if (realmAccess instanceof Map) {
-                Object roles = ((Map<?,?>) realmAccess).get("roles");
-                if (roles instanceof Collection) {
-                    Collection<?> roleList = (Collection<?>) roles;
-                    return roleList.stream()
-                            .map(Object::toString)
-                            .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
-                            .collect(Collectors.toSet());
-                }
-            }
-            return java.util.Collections.emptySet();
+            Collection<GrantedAuthority> authorities = new ArrayList<>(scopeConverter.convert(jwt));
+            authorities.addAll(extractRealmRoles(jwt));
+
+            return authorities;
         });
         return converter;
     }
 
+    private Collection<SimpleGrantedAuthority> extractRealmRoles(Jwt jwt) {
+        Object realmAccess = jwt.getClaim("realm_access");
+        if (!(realmAccess instanceof Map)) return Collections.emptyList();
+        Map<String, Object> realm = (Map<String, Object>) realmAccess;
+        Object roles = realm.get("roles");
+        if (!(roles instanceof Collection)) return Collections.emptySet();
+        return ((Collection<?>) roles).stream()
+                .map(Object::toString)
+                .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
+                .collect(Collectors.toSet());
+    }
+
     @Bean
     public JwtDecoder jwtDecoder(Environment env) {
-        // Prefer issuer-uri; Spring will configure NimbusJwtDecoder automatically if you expose
-        // spring.security.oauth2.resourceserver.jwt.issuer-uri in properties.
         String issuer = env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri");
         if (issuer != null) {
             return withJwkSetUri(
-                    issuer + "/protocol/openid-connect/certs" // optional if not using issuer discovery
+                    issuer + "/protocol/openid-connect/certs"
             ).build();
         }
         String jwkSetUri = env.getProperty("spring.security.oauth2.resourceserver.jwt.jwk-set-uri");
