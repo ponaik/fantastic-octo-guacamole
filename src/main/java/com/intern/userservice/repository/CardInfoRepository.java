@@ -33,8 +33,4 @@ public interface CardInfoRepository extends JpaRepository<CardInfo, Long> {
 
     boolean existsCardInfoByUserIdAndNumber(Long userId, String number);
 
-    // Named methods
-    // Page<CardInfo> findAll(Pageable pageable);
-    // findById is a named method
-    // deleteById is a named method
 }

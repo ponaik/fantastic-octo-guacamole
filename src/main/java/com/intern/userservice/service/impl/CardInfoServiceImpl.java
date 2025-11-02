@@ -56,7 +56,8 @@ public class CardInfoServiceImpl implements CardInfoService {
     @Override
     @Caching(evict = {
             @CacheEvict(value = "card", key = "#id"),
-            @CacheEvict(value = "cards", allEntries = true)
+            @CacheEvict(value = "cards", allEntries = true),
+            @CacheEvict(value = "userCards", allEntries = true)
     })
     public void deleteCardById(Long id) {
         if (!cardInfoRepository.existsById(id)) {
@@ -72,7 +73,8 @@ public class CardInfoServiceImpl implements CardInfoService {
                     @CachePut(value = "card", key = "#result.id")
             },
             evict = {
-                    @CacheEvict(value = "cards", allEntries = true)
+                    @CacheEvict(value = "cards", allEntries = true),
+                    @CacheEvict(value = "userCards", key = "#dto.userId()")
             }
     )
     public CardInfoResponse createCard(CardInfoCreateDto dto) {

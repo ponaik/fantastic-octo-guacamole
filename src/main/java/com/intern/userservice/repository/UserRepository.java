@@ -52,10 +52,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.sub FROM User u WHERE u.id = :id")
     Optional<UUID> findSubById(@Param("id") Long id);
 
-    @Query("SELECT u.email FROM User u WHERE u.email = :email")
+    @Query("SELECT u.sub FROM User u WHERE u.email = :email")
     Optional<UUID> findSubByEmail(@Param("email") String email);
 
-//    Named methods
-//    Pagination is built-in from PagingAndSortingRepository<T, ID>
-//    Page<User> findAll(Pageable pageable);
+    @Query("SELECT u.sub from User u " +
+            "JOIN u.cards c " +
+            "WHERE c.id = :cardId")
+    Optional<UUID> findSubByCardId(@Param("cardId") Long cardId);
 }
