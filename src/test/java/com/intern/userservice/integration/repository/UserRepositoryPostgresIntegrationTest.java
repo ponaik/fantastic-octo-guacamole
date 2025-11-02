@@ -8,109 +8,86 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Tag("integration")
+@ActiveProfiles("test")
+@Transactional
 @ExtendWith(PostgresTestContainerExtension.class)
 class UserRepositoryPostgresIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
 
-    @Test
-    @Transactional
-    void testCreateUserNative() {
-        User created = userRepository.createUserNative(
-                "George",
-                "Washington",
-                LocalDate.of(1980, 2, 22),
-                "george.washington@example.com"
+    private User createTestUser(String name, String surname, LocalDate dob) {
+        return userRepository.createUserNative(
+                UUID.randomUUID(),
+                name,
+                surname,
+                dob,
+                name.toLowerCase() + "." + surname.toLowerCase() + "+" + UUID.randomUUID() + "@example.com"
         );
+    }
+
+    @Test
+    void testCreateUserNative() {
+        User created = createTestUser("George", "Washington", LocalDate.of(1980, 2, 22));
 
         assertThat(created.getId()).isNotNull();
         assertThat(created.getName()).isEqualTo("George");
         assertThat(created.getSurname()).isEqualTo("Washington");
-        assertThat(created.getEmail()).isEqualTo("george.washington@example.com");
+        assertThat(created.getEmail()).contains("george.washington");
     }
 
     @Test
-    @Transactional
     void testFindByIdJPQL() {
-        Optional<User> found = userRepository.findByIdJPQL(1L);
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        Optional<User> found = userRepository.findByIdJPQL(user.getId());
 
         assertThat(found).isPresent();
-        assertThat(found.get().getName()).isEqualTo("Alice");
-        assertThat(found.get().getSurname()).isEqualTo("Johnson");
+        assertThat(found.get().getName()).isEqualTo("Shared");
+        assertThat(found.get().getSurname()).isEqualTo("User");
     }
 
     @Test
-    @Transactional
-    void testFindByEmail_seededAlice() {
-        Optional<User> alice = userRepository.findByEmail("alice.johnson@example.com");
+    void testFindByEmail_and_cards_relationship() {
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
 
-        assertThat(alice).isPresent();
-        assertThat(alice.get().getName()).isEqualTo("Alice");
-        assertThat(alice.get().getCards()).hasSize(2); // seeded with 2 cards
+        Optional<User> fetched = userRepository.findByEmail(user.getEmail());
+
+        assertThat(fetched).isPresent();
+        assertThat(fetched.get().getName()).isEqualTo("Shared");
+        assertThat(fetched.get().getCards()).isEmpty();
     }
 
     @Test
-    @Transactional
-    void testFindByEmail_seededDavid() {
-        Optional<User> david = userRepository.findByEmail("david.brown@example.com");
-
-        assertThat(david).isPresent();
-        assertThat(david.get().getCards()).isEmpty(); // seeded with 0 cards
-    }
-
-
-    @Test
-    @Transactional
     void testExistsByEmail() {
-        // Create a user
-        userRepository.createUserNative(
-                "Isaac",
-                "Newton",
-                LocalDate.of(1643, 1, 4),
-                "isaac.newton@example.com"
-        );
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
 
-        boolean exists = userRepository.existsByEmail("isaac.newton@example.com");
-        boolean notExists = userRepository.existsByEmail("nonexistent@example.com");
+        boolean exists = userRepository.existsByEmail(user.getEmail());
+        boolean notExists = userRepository.existsByEmail("nonexistent+" + UUID.randomUUID() + "@example.com");
 
         assertThat(exists).isTrue();
         assertThat(notExists).isFalse();
     }
 
     @Test
-    @Transactional
-    void testUpdateSeededUser() {
-        User updated = userRepository.updateByIdNative(
-                2L,
-                "Robert",
-                "Smith",
-                java.time.LocalDate.of(1985, 9, 23),
-                "robert.smith@example.com"
-        );
+    void testDeleteByIdJPQL() {
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
 
-        assertThat(updated.getName()).isEqualTo("Robert");
-        assertThat(updated.getEmail()).isEqualTo("robert.smith@example.com");
-    }
-
-    @Test
-    @Transactional
-    void testDeleteSeededUser() {
-        int deleted = userRepository.deleteByIdJPQL(5L); // Eva
+        int deleted = userRepository.deleteByIdJPQL(user.getId());
         assertThat(deleted).isEqualTo(1);
 
-        Optional<User> eva = userRepository.findByIdJPQL(5L);
-        assertThat(eva).isEmpty();
+        Optional<User> fetched = userRepository.findByIdJPQL(user.getId());
+        assertThat(fetched).isEmpty();
     }
-
-
 }

@@ -6,9 +6,6 @@ databaseChangeLog:
       file: v1.0/20251015_apply_indexes.yaml
       relativeToChangelogFile: true
   - include:
-      file: v1.0/20251015_fill_with_sample_data.yaml
-      relativeToChangelogFile: true
-  - include:
       file: v1.1/20251020_sequences_fix.yaml
       relativeToChangelogFile: true
   - include:
@@ -16,4 +13,7 @@ databaseChangeLog:
       relativeToChangelogFile: true
   - include:
       file: v1.1/20251021_cardinfo_schema_update.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: v1.2/20251031_users_add_subuuid_and_index.yaml
       relativeToChangelogFile: true

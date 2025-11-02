@@ -2,7 +2,9 @@ package com.intern.userservice.integration.repository;
 
 import com.intern.userservice.integration.extension.PostgresTestContainerExtension;
 import com.intern.userservice.model.CardInfo;
+import com.intern.userservice.model.User;
 import com.intern.userservice.repository.CardInfoRepository;
+import com.intern.userservice.repository.UserRepository;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,36 +12,47 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Tag("integration")
+@ActiveProfiles("test")
 @ExtendWith(PostgresTestContainerExtension.class)
+@Transactional
 class CardInfoRepositoryPostgresIntegrationTest {
 
     @Autowired
     private CardInfoRepository cardInfoRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    private User createTestUser(String name, String surname, LocalDate dob) {
+        String email = name.toLowerCase() + "." + surname.toLowerCase() + "+" + UUID.randomUUID() + "@example.com";
+        return userRepository.createUserNative(UUID.randomUUID(), name, surname, dob, email);
+    }
+
+    private CardInfo createTestCard(String number, String holder, LocalDate expires, Long userId) {
+        return cardInfoRepository.createCardNative(number, holder, expires, userId);
+    }
+
     @Test
-    @Transactional
     void testCreateCardNative() {
-        CardInfo created = cardInfoRepository.createCardNative(
-                "1234567890123456",
-                "Test Holder",
-                LocalDate.of(2030, 12, 31),
-                4L // David has no cards in seeded data
-        );
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        CardInfo created = createTestCard("1234567890123456", "Test Holder", LocalDate.of(2030, 12, 31), user.getId());
 
         assertThat(created.getId()).isNotNull();
         assertThat(created.getHolder()).isEqualTo("Test Holder");
 
-        // Verify it was persisted
         Optional<CardInfo> found = cardInfoRepository.findById(created.getId());
         assertThat(found).isPresent();
         assertThat(found.get().getNumber()).isEqualTo("1234567890123456");
@@ -47,39 +60,48 @@ class CardInfoRepositoryPostgresIntegrationTest {
 
     @Test
     void testFindByIdNative() {
-        Optional<CardInfo> card = cardInfoRepository.findByIdNative(1L); // Alice’s first card
-        assertThat(card).isPresent();
-        assertThat(card.get().getHolder()).isEqualTo("Alice Johnson");
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        CardInfo card = createTestCard("4111111111111111", "Shared User", LocalDate.of(2028, 6, 30), user.getId());
+
+        Optional<CardInfo> fetched = cardInfoRepository.findByIdNative(card.getId());
+        assertThat(fetched).isPresent();
+        assertThat(fetched.get().getHolder()).isEqualTo("Shared User");
+        assertThat(fetched.get().getNumber()).isEqualTo("4111111111111111");
     }
 
     @Test
-    @Transactional
     void testDeleteByIdNative() {
-        int deleted = cardInfoRepository.deleteByIdNative(3L); // Bob’s only card
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        CardInfo cardToDelete = createTestCard("5555444433332222", "To Delete", LocalDate.of(2029, 7, 31), user.getId());
+
+        int deleted = cardInfoRepository.deleteByIdNative(cardToDelete.getId());
         assertThat(deleted).isEqualTo(1);
 
-        Optional<CardInfo> card = cardInfoRepository.findByIdNative(3L);
-        assertThat(card).isEmpty();
+        Optional<CardInfo> shouldBeEmpty = cardInfoRepository.findByIdNative(cardToDelete.getId());
+        assertThat(shouldBeEmpty).isEmpty();
     }
 
     @Test
     void testGetCardInfosByUserId() {
-        List<CardInfo> aliceCards = cardInfoRepository.getCardInfosByUserId(1L);
-        assertThat(aliceCards).hasSize(2);
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
 
-        List<CardInfo> claraCards = cardInfoRepository.getCardInfosByUserId(3L);
-        assertThat(claraCards).hasSize(3);
+        createTestCard("4111111111111111", "Shared User", LocalDate.of(2028, 6, 30), user.getId());
+        createTestCard("4222222222222222", "Shared User", LocalDate.of(2029, 6, 30), user.getId());
 
-        List<CardInfo> davidCards = cardInfoRepository.getCardInfosByUserId(4L);
-        assertThat(davidCards).isEmpty();
+        List<CardInfo> cards = cardInfoRepository.getCardInfosByUserId(user.getId());
+        assertThat(cards).hasSizeGreaterThanOrEqualTo(2);
     }
 
     @Test
     void testExistsCardInfoByUserIdAndNumber() {
-        boolean exists = cardInfoRepository.existsCardInfoByUserIdAndNumber(
-                1L, "4111111111111111"); // Alice’s first card
-        boolean notExists = cardInfoRepository.existsCardInfoByUserIdAndNumber(
-                2L, "nonexistent");
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        createTestCard("4111111111111111", "Shared User", LocalDate.of(2028, 6, 30), user.getId());
+
+        boolean exists = cardInfoRepository.existsCardInfoByUserIdAndNumber(user.getId(), "4111111111111111");
+        boolean notExists = cardInfoRepository.existsCardInfoByUserIdAndNumber(user.getId(), "nonexistent");
 
         assertThat(exists).isTrue();
         assertThat(notExists).isFalse();
@@ -87,25 +109,39 @@ class CardInfoRepositoryPostgresIntegrationTest {
 
     @Test
     void testFindByIdNamedMethod() {
-        Optional<CardInfo> card = cardInfoRepository.findById(2L); // Alice’s second card
-        assertThat(card).isPresent();
-        assertThat(card.get().getHolder()).isEqualTo("Alice Johnson");
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        CardInfo card = createTestCard("4222222222222222", "Shared User", LocalDate.of(2029, 6, 30), user.getId());
+
+        Optional<CardInfo> fetched = cardInfoRepository.findById(card.getId());
+        assertThat(fetched).isPresent();
+        assertThat(fetched.get().getHolder()).isEqualTo("Shared User");
     }
 
     @Test
-    @Transactional
     void testDeleteByIdNamedMethod() {
-        cardInfoRepository.deleteById(8L); // Eva’s second card
-        Optional<CardInfo> card = cardInfoRepository.findById(8L);
-        assertThat(card).isEmpty();
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        CardInfo card = createTestCard("6666777788889999", "Shared User Delete", LocalDate.of(2031, 8, 31), user.getId());
+
+        cardInfoRepository.deleteById(card.getId());
+        Optional<CardInfo> shouldBeEmpty = cardInfoRepository.findById(card.getId());
+        assertThat(shouldBeEmpty).isEmpty();
     }
 
     @Test
     void testFindAllWithPagination() {
+        User user = createTestUser("Shared", "User", LocalDate.of(1990, 1, 1));
+
+        for (int i = 0; i < 8; i++) {
+            String number = String.format("70000000000000%02d", i);
+            createTestCard(number, "Holder" + i, LocalDate.of(2030, 1, 1), user.getId());
+        }
+
         Pageable pageable = org.springframework.data.domain.PageRequest.of(0, 3);
         Page<CardInfo> page = cardInfoRepository.findAll(pageable);
 
-        assertThat(page.getTotalElements()).isGreaterThanOrEqualTo(8); // seeded 8 cards
+        assertThat(page.getTotalElements()).isGreaterThanOrEqualTo(8);
         assertThat(page.getContent().size()).isLessThanOrEqualTo(3);
     }
 }

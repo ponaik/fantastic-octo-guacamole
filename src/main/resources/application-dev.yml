@@ -9,3 +9,17 @@ spring:
       port: ${REDIS_PORT}
   jpa:
     show-sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH_ISSUER_URI}
+
+server:
+  port: 8081
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+

@@ -9,15 +9,17 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query(value = "INSERT INTO users (name, surname, birth_date, email) " +
-            "VALUES (:name, :surname, :birthDate, :email) " +
+    @Query(value = "INSERT INTO users (sub, name, surname, birth_date, email) " +
+            "VALUES (:sub, :name, :surname, :birthDate, :email) " +
             "RETURNING *",
             nativeQuery = true)
-    User createUserNative(@Param("name") String name,
+    User createUserNative(@Param("sub") UUID sub,
+                          @Param("name") String name,
                           @Param("surname") String surname,
                           @Param("birthDate") LocalDate birthDate,
                           @Param("email") String email);
@@ -47,7 +49,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
-//    Named methods
-//    Pagination is built-in from PagingAndSortingRepository<T, ID>
-//    Page<User> findAll(Pageable pageable);
+    @Query("SELECT u.sub FROM User u WHERE u.id = :id")
+    Optional<UUID> findSubById(@Param("id") Long id);
+
+    @Query("SELECT u.sub FROM User u WHERE u.email = :email")
+    Optional<UUID> findSubByEmail(@Param("email") String email);
+
+    @Query("SELECT u.sub from User u " +
+            "JOIN u.cards c " +
+            "WHERE c.id = :cardId")
+    Optional<UUID> findSubByCardId(@Param("cardId") Long cardId);
 }

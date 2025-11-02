@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20251021_users_add_sub_column
+      author: ioann_yaromenka
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: sub
+                  type: UUID
+
+  - changeSet:
+      id: 20251021_users_sub_not_null
+      author: ioann_yaromenka
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addNotNullConstraint:
+            tableName: users
+            columnName: sub
+
+  - changeSet:
+      id: 20251021_users_sub_unique
+      author: ioann_yaromenka
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: sub
+            constraintName: uc_users_sub
+
+  - changeSet:
+      id: 20251021_users_sub_index
+      author: ioann_yaromenka
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createIndex:
+            tableName: users
+            indexName: idx_users_sub
+            columns:
+              - column:
+                  name: sub

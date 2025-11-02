@@ -9,7 +9,8 @@
 # https://github.com/docker/awesome-compose
 services:
   userservice:
-    image: ghcr.io/ponaik/fantastic-octo-guacamole:bd56028e3fff013bd3d807ad05933f389452ddec
+    build:
+      context: .
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_SCHEMA}
@@ -17,12 +18,15 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
       SPRING_DATA_REDIS_HOST: ${REDIS_HOST}
       SPRING_DATA_REDIS_PORT: ${REDIS_PORT}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${OAUTH_ISSUER_URI}
     ports:
-      - 8080:8080
+      - 8000:8080
     depends_on:
       postgres:
          condition: service_healthy
       redis:
+        condition: service_started
+      auth-service:
         condition: service_started
 
   postgres:
@@ -50,6 +54,13 @@ services:
       - ${REDIS_PORT}
     volumes:
       - redis-data:/data
+
+  auth-service:
+    image: ponaik/auth-service:latest
+    expose:
+      - ${OAUTH_PORT}
+    ports:
+      - 8001:${OAUTH_PORT}
 
 volumes:
   db-data:
