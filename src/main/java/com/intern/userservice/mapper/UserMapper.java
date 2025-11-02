@@ -4,7 +4,10 @@ import com.intern.userservice.dto.UserCreateDto;
 import com.intern.userservice.dto.UserResponse;
 import com.intern.userservice.dto.UserUpdateDto;
 import com.intern.userservice.model.User;
-import org.mapstruct.*;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = { CardInfoMapper.class })
 public interface UserMapper {
