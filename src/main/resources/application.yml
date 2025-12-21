@@ -33,3 +33,8 @@ logging:
     root: INFO
     org.springframework.web: INFO
     org.hibernate.SQL: WARN
+
+management:
+  endpoint:
+    health:
+      show-details: always
