@@ -263,22 +263,8 @@ class UserServiceImplTest {
 
     @Test
     void deleteUser_whenExists_deletes() {
-        given(userRepository.existsById(1L)).willReturn(true);
-
         userService.deleteUser(1L);
 
-        verify(userRepository).existsById(1L);
         verify(userRepository).deleteByIdJPQL(1L);
-    }
-
-    @Test
-    void deleteUser_whenNotExists_throwsNotFoundException() {
-        given(userRepository.existsById(5L)).willReturn(false);
-
-        assertThatThrownBy(() -> userService.deleteUser(5L))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("User not found with id 5");
-
-        verify(userRepository).existsById(5L);
     }
 }

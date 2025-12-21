@@ -118,24 +118,9 @@ class CardInfoServiceImplTest {
 
     @Test
     void deleteCardById_whenExists_shouldDelete() {
-        given(cardInfoRepository.existsById(1L)).willReturn(true);
-
         cardInfoService.deleteCardById(1L);
 
-        verify(cardInfoRepository).existsById(1L);
         verify(cardInfoRepository).deleteByIdNative(1L);
-        verifyNoMoreInteractions(cardInfoRepository, cardInfoMapper, userRepository);
-    }
-
-    @Test
-    void deleteCardById_whenNotExists_shouldThrow() {
-        given(cardInfoRepository.existsById(1L)).willReturn(false);
-
-        assertThatThrownBy(() -> cardInfoService.deleteCardById(1L))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("Card not found with id 1");
-
-        verify(cardInfoRepository).existsById(1L);
         verifyNoMoreInteractions(cardInfoRepository, cardInfoMapper, userRepository);
     }
 
