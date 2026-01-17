@@ -115,6 +115,9 @@ public class UserServiceImpl implements UserService {
             }
     )
     public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("User not found with id " + id);
+        }
         userRepository.deleteByIdJPQL(id);
     }
 }

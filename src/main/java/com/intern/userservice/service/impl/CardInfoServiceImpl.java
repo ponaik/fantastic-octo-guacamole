@@ -60,6 +60,9 @@ public class CardInfoServiceImpl implements CardInfoService {
             @CacheEvict(value = "userCards", allEntries = true)
     })
     public void deleteCardById(Long id) {
+        if (!cardInfoRepository.existsById(id)) {
+            throw new EntityNotFoundException("Card not found with id " + id);
+        }
         cardInfoRepository.deleteByIdNative(id);
     }
 
