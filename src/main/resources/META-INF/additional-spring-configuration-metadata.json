@@ -1,0 +1,44 @@
+{
+  "properties": [
+    {
+      "name": "openapi.oauth.issuer-uri",
+      "type": "java.lang.String",
+      "description": "OpenApi OAuth2 identity provider issuer URI."
+    },
+    {
+      "name": "cache.ttl.default",
+      "type": "java.lang.String",
+      "description": "Default time-to-live for all caches."
+    },
+    {
+      "name": "cache.ttl.user",
+      "type": "java.lang.String",
+      "description": "Time-to-live for individual user cache entries."
+    },
+    {
+      "name": "cache.ttl.userCards",
+      "type": "java.lang.String",
+      "description": "Time-to-live for user-to-cards mapping cache."
+    },
+    {
+      "name": "cache.ttl.userByEmail",
+      "type": "java.lang.String",
+      "description": "Time-to-live for email-based user lookups."
+    },
+    {
+      "name": "cache.ttl.users",
+      "type": "java.lang.String",
+      "description": "Time-to-live for the general users list cache."
+    },
+    {
+      "name": "cache.ttl.card",
+      "type": "java.lang.String",
+      "description": "Time-to-live for specific card data cache."
+    },
+    {
+      "name": "cache.ttl.cards",
+      "type": "java.lang.String",
+      "description": "Time-to-live for the global cards collection cache."
+    }
+  ]
+}

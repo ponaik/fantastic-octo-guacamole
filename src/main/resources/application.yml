@@ -15,6 +15,10 @@ spring:
   liquibase:
     change-log: classpath:liquibase/changelog/master.yaml
 
+openapi:
+  oauth:
+    issuer-uri: ${OAUTH_ISSUER_URI}
+
 cache:
   ttl:
     default: 10m
@@ -33,3 +37,8 @@ logging:
     root: INFO
     org.springframework.web: INFO
     org.hibernate.SQL: WARN
+
+management:
+  endpoint:
+    health:
+      show-details: always
