@@ -12,7 +12,7 @@
 
     <groupId>com.intern.userservice</groupId>
     <artifactId>UserService</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.1.1</version>
     <name>UserService</name>
     <description>Demo project for Spring Boot</description>
 
