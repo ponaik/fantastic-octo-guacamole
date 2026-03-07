@@ -10,6 +10,7 @@ import com.intern.userservice.repository.UserRepository;
 import com.intern.userservice.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -52,6 +54,7 @@ public class UserServiceImpl implements UserService {
                 request.email()
         );
 
+        log.debug("Created user with email {} by id {} ", request.email(),  created.getId());
         return userMapper.toUserResponse(created);
     }
 
@@ -101,6 +104,8 @@ public class UserServiceImpl implements UserService {
                 user.getSurname(),
                 user.getBirthDate(),
                 user.getEmail());
+
+        log.debug("Updated user with id {} as {} ", id, user.toString());
         return userMapper.toUserResponse(updated);
     }
 
@@ -119,5 +124,6 @@ public class UserServiceImpl implements UserService {
             throw new EntityNotFoundException("User not found with id " + id);
         }
         userRepository.deleteByIdJPQL(id);
+        log.debug("Deleted user with id {} ", id);
     }
 }
