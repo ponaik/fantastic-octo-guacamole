@@ -10,6 +10,7 @@ import com.intern.userservice.repository.UserRepository;
 import com.intern.userservice.service.CardInfoService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CardInfoServiceImpl implements CardInfoService {
@@ -64,6 +66,7 @@ public class CardInfoServiceImpl implements CardInfoService {
             throw new EntityNotFoundException("Card not found with id " + id);
         }
         cardInfoRepository.deleteByIdNative(id);
+        log.debug("Card with id {} has been deleted", id);
     }
 
     @Transactional
@@ -92,6 +95,7 @@ public class CardInfoServiceImpl implements CardInfoService {
                 dto.expirationDate(),
                 dto.userId()
         );
+        log.debug("Card with id {} has been created", saved.getId());
         return cardInfoMapper.toCardInfoResponse(saved);
     }
 }
